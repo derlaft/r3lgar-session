@@ -51,8 +51,8 @@ func start(process string, finish chan bool) {
 		}
 
 		restarts++
-		if restarts == 20 {
-			time.Sleep(time.Second * 5)
+		if restarts == 10 {
+			time.Sleep(time.Second * 20)
 			restarts = 0
 		}
 	}
