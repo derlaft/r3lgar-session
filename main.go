@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 )
 
 var dones = []chan bool{}
@@ -29,8 +30,9 @@ func background(process string, finish chan error) *exec.Cmd {
 func start(process string, finish chan bool) {
 
 	var (
-		done = make(chan error, 1)
-		cmd  *exec.Cmd
+		done     = make(chan error, 1)
+		cmd      *exec.Cmd
+		restarts = 0
 	)
 
 	for {
@@ -44,8 +46,14 @@ func start(process string, finish chan bool) {
 			return
 		case err := <-done:
 			if err != nil {
-				log.Printf("process done with error = %v; restarting", err)
+				log.Printf("process %v done with error = %v; restarting", process, err)
 			}
+		}
+
+		restarts++
+		if restarts == 20 {
+			time.Sleep(time.Second * 5)
+			restarts = 0
 		}
 	}
 }
@@ -61,7 +69,7 @@ func visit(path string, f os.FileInfo, err error) error {
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Println("Usage: %v directory_with_scripts", os.Args[0])
+		log.Printf("Usage: %v directory_with_scripts", os.Args[0])
 		return
 	}
 	err := filepath.Walk(os.Args[1], visit)
