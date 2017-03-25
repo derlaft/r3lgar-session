@@ -7,14 +7,10 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strings"
-	"sync"
 	"syscall"
 )
 
-var (
-	dones = []chan bool{}
-	wg    = sync.WaitGroup{}
-)
+var dones = []chan bool{}
 
 func background(process string, finish chan error) *exec.Cmd {
 	cmd := exec.Command("/bin/sh", process)
@@ -31,8 +27,6 @@ func background(process string, finish chan error) *exec.Cmd {
 
 // http://stackoverflow.com/questions/11886531/terminating-a-process-started-with-os-exec-in-golang
 func start(process string, finish chan bool) {
-	wg.Add(1)
-	defer wg.Done()
 
 	var (
 		done = make(chan error, 1)
@@ -86,5 +80,5 @@ func main() {
 		os.Exit(0)
 	}()
 
-	wg.Wait()
+	<-make(chan bool)
 }
