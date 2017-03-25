@@ -1,0 +1,12 @@
+## KISS and simple session manager powered by shell scripts
+
+Usage as simple as
+    go get github.com/derlaft/r3lgar-session && $GOPATH/bin/r3lgar-session path-to-shitscripts
+
+Exaple shitscript:
+    #!/bin/sh
+    # well, shebang is kinda ignored
+    exec macro --replace
+    # restarts are handled
+    # kills of manager process -- to
+    # enjoy
