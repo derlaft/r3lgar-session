@@ -1,3 +1,5 @@
+// say hi or die! (=
+
 package main
 
 import (
